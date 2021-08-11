@@ -1,6 +1,6 @@
 package com.rockthejvm.playground
 
-object ContextualAbstractions {
+object ContextualAbstractionsScala3 {
   
   // given/using combo
   
@@ -40,6 +40,8 @@ object ContextualAbstractions {
       list.foldLeft(combiner.empty){ (acc, b) => combiner.combine(acc, b) }
 
   val sumOfInts = List(1,2,3,4).reduceAll
+
+  def main(args: Array[String]): Unit = ()
 }
 // typeclasses
 object Scala3Typeclasses {
