@@ -12,7 +12,6 @@ object Effects {
       MyIO(() => f(unsafeRun()).unsafeRun())
     }
   }
-  def main(args: Array[String]): Unit = {
     // Exercises
     // 1. An IO which returns the current time of the system
     def currentTime: MyIO[Instant] = MyIO(() => Instant.now())
@@ -31,5 +30,8 @@ object Effects {
 
     // 4. An IO that reads from the console.
     def readIO: MyIO[String] = MyIO(() => io.StdIn.readLine())
+
+  def main(args: Array[String]): Unit = {
+
   }
 }
