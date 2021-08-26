@@ -10,12 +10,17 @@ object IOIntroduction {
     _ <- ioa
     b <- iob
   } yield b
+  // Also
+  // ioa *> iob
+  // ioa >> iob - ioa is lazily evaluated
 
   // 2. sequence 2 IOs and take the result of the First one
   def sequenceTakeFirst[A, B](ioa: IO[A], iob: IO[B]): IO[A] = for {
     a <- ioa
     _ <- iob
   } yield a
+  // ioa <* iob
+  // ioa << iob
 
   // mapN doesn't necessarily run the IOs sequentially.
   def takeLast[A, B](ioa: IO[A], iob: IO[B]): IO[B] = (ioa, iob).mapN { (_, snd) => snd }
@@ -26,20 +31,30 @@ object IOIntroduction {
     _ <- io
     a <- forever(io)
   } yield a
+  // io *> forever(io)  - will stackoverflow - because it's evaluated strictly
+  // io >> forever(io)
+  // io.foreverM - same as forever with tail recursion
 
   // 4. convert an IO to a different type
   def convert[A, B](ioa: IO[A], value: B): IO[B] = ioa.map(_ => value)
+  // io.as(value)
 
   // 5. discart value inside and IO and just return Unit
   def asUnit[A](ioa: IO[A]): IO[Unit] = convert(ioa, ())
+  // ioa.void
 
   // 6. fix stack recursion
   def sumIO(n: Int): IO[Int] = {
-    def loop(x: Int, acc: Int = 0): Int = {
-      if (x <= 0) acc
-      else loop(x-1, acc + x)
-    }
-    IO.delay(loop(n))
+    // def loop(x: Int, acc: Int = 0): Int = {
+    //   if (x <= 0) acc
+    //   else loop(x-1, acc + x)
+    // }
+    // IO.delay(loop(n))
+    if (n <= 0) IO.pure(0)
+    else for {
+      l <- IO.pure(n)
+      p <- sumIO(n-1)
+    } yield l + p
   }
 
 
