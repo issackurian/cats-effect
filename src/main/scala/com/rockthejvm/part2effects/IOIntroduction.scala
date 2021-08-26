@@ -7,14 +7,14 @@ object IOIntroduction {
   
   // 1. sequence two IOs and take the result of the LAST one
   def sequenceTakeLast[A, B](ioa: IO[A], iob: IO[B]): IO[B] = for {
-    a <- ioa
+    _ <- ioa
     b <- iob
   } yield b
 
   // 2. sequence 2 IOs and take the result of the First one
   def sequenceTakeFirst[A, B](ioa: IO[A], iob: IO[B]): IO[A] = for {
     a <- ioa
-    b <- iob
+    _ <- iob
   } yield a
 
   // mapN doesn't necessarily run the IOs sequentially.
@@ -65,10 +65,14 @@ object IOIntroduction {
     //   x <- if (n == 0) a else if (n == 1) b else fibonacci(n - 1)
     // } yield x
 
-    if (n > 2) fibonacci(n - 2).flatMap { a =>
-      fibonacci(n - 1)
-        .map(b => a + b)
-    }
+    if (n > 2) for {
+      a <- fibonacci(n-2)
+      b <- fibonacci(n-1)
+    } yield a + b
+    // fibonacci(n - 2).flatMap { a =>
+    //   fibonacci(n - 1)
+    //     .map(b => a + b)
+    // }
     else if (n == 2) IO.pure(BigInt(1))
     else IO.pure(BigInt(0))
   }
